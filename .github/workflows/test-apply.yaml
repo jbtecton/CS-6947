@@ -14,8 +14,6 @@ jobs:
           python-version: "3.9"
       - name: Install Tecton CLI
         run: pip install tecton
-      - name: Login to Tecton
-        run: tecton login spark.tecton.ai
       - name: Create workspace
         run: tecton workspace create CS-6947-1
       - name: Select workspace
