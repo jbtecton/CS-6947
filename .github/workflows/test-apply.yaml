@@ -1,27 +1,22 @@
-name: Minimal Tecton Apply Test
-
+name: Tecton CI
 on:
-  workflow_dispatch:  # Manual trigger only
-
+  workflow_dispatch:
 jobs:
-  test-apply:
+  setup-tecton:
     runs-on: ubuntu-latest
-    
+    env:
+      TECTON_API_KEY: ${{ secrets.TECTON_API_KEY }}
+      API_SERVICE: https://spark.tecton.ai/api  # Update this to your cluster
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup and Test
-      run: |
-        pip install tecton
-        tecton login --url https://spark.tecton.ai --api-key ff5e04fab82503202787c8a241599bb0
-        
-        # Create a unique workspace name
-        WORKSPACE_NAME="test-$(date +%s)"
-        echo "Creating workspace: $WORKSPACE_NAME"
-        
-        # This is where the customer is failing
-        tecton workspace create --name $WORKSPACE_NAME
-        tecton apply --workspace $WORKSPACE_NAME
-        
-        # Cleanup
-        tecton workspace delete --name $WORKSPACE_NAME --force
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install Tecton CLI
+        run: pip install tecton
+      - name: Login to Tecton
+        run: tecton login spark.tecton.ai
+      - name: Create workspace
+        run: tecton workspace create CS-6947-1
+      - name: Select workspace
+        run: tecton workspace select CS-6947-1
