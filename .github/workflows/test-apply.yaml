@@ -1,0 +1,27 @@
+name: Minimal Tecton Apply Test
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  test-apply:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup and Test
+      run: |
+        pip install tecton
+        tecton login --url https://spark.tecton.ai --api-key ff5e04fab82503202787c8a241599bb0
+        
+        # Create a unique workspace name
+        WORKSPACE_NAME="test-$(date +%s)"
+        echo "Creating workspace: $WORKSPACE_NAME"
+        
+        # This is where the customer is failing
+        tecton workspace create --name $WORKSPACE_NAME
+        tecton apply --workspace $WORKSPACE_NAME
+        
+        # Cleanup
+        tecton workspace delete --name $WORKSPACE_NAME --force
