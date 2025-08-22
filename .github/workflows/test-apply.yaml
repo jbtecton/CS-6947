@@ -18,6 +18,8 @@ jobs:
         run: tecton workspace create temp-deployment-dev-workspace
       - name: Select workspace
         run: tecton workspace select temp-deployment-dev-workspace
+      - name: Tecton init
+        run: tecton init
       - name: Tecton plan
         run: tecton plan
       - name: Tecton apply
