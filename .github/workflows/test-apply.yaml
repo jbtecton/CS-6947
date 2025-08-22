@@ -25,4 +25,4 @@ jobs:
       - name: Tecton apply
         run: tecton apply
       - name: Delete workspace
-        run: tecton workspace delete temp-deployment-dev-workspace
+        run: tecton workspace delete temp-deployment-dev-workspace -y
