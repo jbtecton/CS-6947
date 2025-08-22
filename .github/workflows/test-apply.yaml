@@ -2,7 +2,7 @@ name: Tecton CI
 on:
   workflow_dispatch:
 jobs:
-  setup-tecton:
+  stress-test-1:
     runs-on: ubuntu-latest
     env:
       TECTON_API_KEY: ${{ secrets.TECTON_API_KEY }}
@@ -15,9 +15,9 @@ jobs:
       - name: Install Tecton CLI
         run: pip install tecton
       - name: Create workspace
-        run: tecton workspace create temp-deployment-dev-workspace
+        run: tecton workspace create temp-deployment-dev-workspace-1
       - name: Select workspace
-        run: tecton workspace select temp-deployment-dev-workspace
+        run: tecton workspace select temp-deployment-dev-workspace-1
       - name: Tecton init
         run: tecton init
       - name: Tecton plan
@@ -25,4 +25,30 @@ jobs:
       - name: Tecton apply
         run: tecton apply
       - name: Delete workspace
-        run: tecton workspace delete temp-deployment-dev-workspace -y
+        run: tecton workspace delete temp-deployment-dev-workspace-1 -y
+
+  stress-test-2:
+    runs-on: ubuntu-latest
+    env:
+      TECTON_API_KEY: ${{ secrets.TECTON_API_KEY }}
+      API_SERVICE: https://spark.tecton.ai/api  # Update this to your cluster
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install Tecton CLI
+        run: pip install tecton
+      - name: Create workspace
+        run: tecton workspace create temp-deployment-dev-workspace-2
+      - name: Select workspace
+        run: tecton workspace select temp-deployment-dev-workspace-2
+      - name: Tecton init
+        run: tecton init
+      - name: Tecton plan
+        run: tecton plan
+      - name: Tecton apply
+        run: tecton apply
+      - name: Delete workspace
+        run: tecton workspace delete temp-deployment-dev-workspace-2 -y
+
