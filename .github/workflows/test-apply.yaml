@@ -15,6 +15,12 @@ jobs:
       - name: Install Tecton CLI
         run: pip install tecton
       - name: Create workspace
-        run: tecton workspace create CS-6947-1
+        run: tecton workspace create temp-deployment-dev-workspace
       - name: Select workspace
-        run: tecton workspace select CS-6947-1
+        run: tecton workspace select temp-deployment-dev-workspace
+      - name: Tecton plan
+        run: tecton plan
+      - name: Tecton apply
+        run: tecton apply
+      - name: Delete workspace
+        run: tecton workspace delete temp-deployment-dev-workspace
