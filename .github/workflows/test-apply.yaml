@@ -1,12 +1,12 @@
-name: Tecton CI
+name: Test Delete-Recreate Pattern
 on:
   workflow_dispatch:
 jobs:
-  stress-test-1:
+  test-pattern:
     runs-on: ubuntu-latest
     env:
       TECTON_API_KEY: ${{ secrets.TECTON_API_KEY }}
-      API_SERVICE: https://spark.tecton.ai/api  # Update this to your cluster
+      API_SERVICE: https://tecton-tests.tecton.ai/api
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -14,41 +14,37 @@ jobs:
           python-version: "3.9"
       - name: Install Tecton CLI
         run: pip install tecton
+      
+      # Test 1: Basic delete-recreate
       - name: Create workspace
-        run: tecton workspace create temp-deployment-dev-workspace-1
-      - name: Select workspace
-        run: tecton workspace select temp-deployment-dev-workspace-1
-      - name: Tecton init
-        run: tecton init
-      - name: Tecton plan
-        run: tecton plan
-      - name: Tecton apply
-        run: tecton apply -y
+        run: tecton workspace create test-workspace-1
       - name: Delete workspace
-        run: tecton workspace delete temp-deployment-dev-workspace-1 -y
-
-  stress-test-2:
-    runs-on: ubuntu-latest
-    env:
-      TECTON_API_KEY: ${{ secrets.TECTON_API_KEY }}
-      API_SERVICE: https://spark.tecton.ai/api  # Update this to your cluster
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"
-      - name: Install Tecton CLI
-        run: pip install tecton
-      - name: Create workspace
-        run: tecton workspace create temp-deployment-dev-workspace-2
-      - name: Select workspace
-        run: tecton workspace select temp-deployment-dev-workspace-2
-      - name: Tecton init
-        run: tecton init
-      - name: Tecton plan
-        run: tecton plan
-      - name: Tecton apply
-        run: tecton apply -y
-      - name: Delete workspace
-        run: tecton workspace delete temp-deployment-dev-workspace-2 -y
-
+        run: tecton workspace delete test-workspace-1 -y
+      - name: Recreate workspace
+        run: tecton workspace create test-workspace-1
+      - name: Test apply
+        run: |
+          tecton workspace select test-workspace-1
+          tecton init
+          tecton plan
+          tecton apply -y
+      - name: Cleanup
+        run: tecton workspace delete test-workspace-1 -y
+      
+      # Test 2: Delete-recreate with role assignment
+      - name: Create workspace 2
+        run: tecton workspace create test-workspace-2
+      - name: Delete workspace 2
+        run: tecton workspace delete test-workspace-2 -y
+      - name: Recreate workspace 2
+        run: tecton workspace create test-workspace-2
+      - name: Add role (if you have a service account)
+        run: tecton workspace add-role test-workspace-2 --service-account=YOUR_SERVICE_ACCOUNT --role=consumer
+      - name: Test apply with role
+        run: |
+          tecton workspace select test-workspace-2
+          tecton init
+          tecton plan
+          tecton apply -y
+      - name: Cleanup 2
+        run: tecton workspace delete test-workspace-2 -y
