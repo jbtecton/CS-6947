@@ -39,7 +39,7 @@ jobs:
       - name: Recreate workspace 2
         run: tecton workspace create test-workspace-2
       - name: Add role (if you have a service account)
-        run: tecton workspace add-role test-workspace-2 --service-account=YOUR_SERVICE_ACCOUNT --role=consumer
+        run: tecton access-control assign-role -r consumer -s 10874b2e1f4e4c47b692e67bc5d1ba2f -w test-workspace-2
       - name: Test apply with role
         run: |
           tecton workspace select test-workspace-2
