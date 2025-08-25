@@ -26,8 +26,8 @@ jobs:
         run: |
           tecton workspace select test-workspace-1
           tecton init
-          tecton plan
-          tecton apply -y
+          tecton --verbose plan
+          tecton --verbose apply --workspace=test-workspace-1 -y
       - name: Cleanup
         run: tecton workspace delete test-workspace-1 -y
       
@@ -45,6 +45,6 @@ jobs:
           tecton workspace select test-workspace-2
           tecton init
           tecton plan
-          tecton apply -y
+          tecton --verbose apply --workspace=test-workspace-2 -y
       - name: Cleanup 2
         run: tecton workspace delete test-workspace-2 -y

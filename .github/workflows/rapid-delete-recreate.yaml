@@ -1,0 +1,27 @@
+name: Rapid delete-recreate cycles
+on:
+  workflow_dispatch:
+jobs:
+  test-pattern:
+    runs-on: ubuntu-latest
+    env:
+      TECTON_API_KEY: ${{ secrets.TECTON_API_KEY }}
+      API_SERVICE: https://spark.tecton.ai/api
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install Tecton CLI
+        run: pip install tecton
+      - name: Rapid delete-recreate cycles
+        run: |
+          for i in {1..5}; do
+            echo "Cycle $i"
+            tecton workspace delete test-workspace-$i -y || true
+            tecton workspace create test-workspace-$i
+            tecton workspace select test-workspace-$i
+            tecton init
+            tecton plan  # This might trigger the hanging
+            echo "Cycle $i complete"
+          done
